@@ -98,6 +98,9 @@ const testLocationErrors = (fn) => {
         expect(() => ep[fn](locations.too_small.longitude)).to.throw(Error);
     });
 };
+const roundFloat = (value) => {
+    return +value.toFixed(8);
+};
 
 describe('Creation', () => {
 
@@ -182,10 +185,8 @@ describe('Usage - Center', () => {
         const ep = new EarthPixel(0.1);
         const center = ep.center(locations.valid);
         expect(center).to.be.an.object();
-        if (center) {
-            expect(center.latitude).to.be.a.number();
-            expect(center.longitude).to.be.a.number();
-        }
+        expect(center.latitude).to.be.a.number();
+        expect(center.longitude).to.be.a.number();
     });
 
     it('returns a valid value when calling center', () => {
@@ -212,11 +213,9 @@ describe('Usage - Get', () => {
         const ep = new EarthPixel(0.1);
         const get = ep.get(locations.valid);
         expect(get).to.be.an.object();
-        if (get) {
-            expect(get.latitude).to.be.a.number();
-            expect(get.longitude).to.be.a.number();
-            expect(get.key).to.be.a.string();
-        }
+        expect(get.latitude).to.be.a.number();
+        expect(get.longitude).to.be.a.number();
+        expect(get.key).to.be.a.string();
     });
 
     it('returns a valid value when calling get', () => {
@@ -231,6 +230,77 @@ describe('Usage - Get', () => {
             longitude: 23.25,
             key: `${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`
         });
+    });
+
+});
+
+describe('Config', () => {
+
+    it('returns a valid object when calling debug', () => {
+
+        const ep = new EarthPixel(0.1);
+        const debug = ep.debug();
+        expect(debug).to.be.an.object();
+        expect(debug.width).to.be.a.number();
+        expect(debug.divisions).to.be.a.number();
+    });
+
+    it('returns a valid value when calling debug', () => {
+
+        const ep = new EarthPixel(0.5);
+        expect(ep.debug()).to.equal({
+            width: 0.5,
+            divisions: 360
+        });
+    });
+
+    it('returns a valid value when calling debug', () => {
+
+        const ep = new EarthPixel(0.8047);
+        expect(ep.debug()).to.equal({
+            width: roundFloat(180/224), // 0.8035714286
+            divisions: 224
+        });
+    });
+
+});
+
+describe('Values', () => {
+
+    it('increases longitude along latitude for first pixels', () => {
+
+        const longitude = 0;
+        const ep = new EarthPixel(0.39857);
+        const { width } = ep.debug();
+        let lastLongitude = roundFloat(width / 2);
+
+        for (let latitude = 0; latitude <= 90; latitude = roundFloat(latitude + width)) {
+            const prefix = `Current latitude = ${latitude}`;
+            const expectedLatitude = latitude >= 90.0 ?
+                roundFloat(latitude - roundFloat(width / 2)) : roundFloat(latitude + roundFloat(width / 2));
+            const center = ep.center({
+                latitude,
+                longitude
+            });
+            expect(center).to.be.an.object();
+            expect(center.latitude, prefix).to.equal(expectedLatitude);
+            expect(center.longitude, prefix).to.be.least(lastLongitude);
+            lastLongitude = center.longitude;
+        }
+
+        lastLongitude = roundFloat(width / 2);
+        for (let latitude = -width; latitude >= -90; latitude = roundFloat(latitude - width)) {
+            const prefix = `Current latitude = ${latitude}`;
+            const expectedLatitude = roundFloat(latitude + roundFloat(width / 2));
+            const center = ep.center({
+                latitude,
+                longitude
+            });
+            expect(center).to.be.an.object();
+            expect(center.latitude, prefix).to.equal(expectedLatitude);
+            expect(center.longitude, prefix).to.be.least(lastLongitude);
+            lastLongitude = center.longitude;
+        }
     });
 
 });
