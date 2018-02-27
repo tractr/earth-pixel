@@ -17,6 +17,7 @@ const EarthPixel = require('../lib');
 const { describe, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
+// Common methods and objects
 const locations = {
     NaN: {
         latitude: {
@@ -60,6 +61,42 @@ const locations = {
         latitude: 34,
         longitude: 2
     }
+};
+const testLocationErrors = (fn) => {
+
+    it('throws an error when calling key with wrong location (string)', () => {
+
+        const ep = new EarthPixel(0.1);
+        expect(() => ep[fn]("34.6,2.7")).to.throw(Error);
+    });
+
+    it('throws an error when calling key with wrong location (type)', () => {
+
+        const ep = new EarthPixel(0.1);
+        expect(() => ep[fn](locations.NaN.latitude)).to.throw(Error);
+        expect(() => ep[fn](locations.NaN.longitude)).to.throw(Error);
+    });
+
+    it('throws an error when calling key with wrong location (missing)', () => {
+
+        const ep = new EarthPixel(0.1);
+        expect(() => ep[fn](locations.missing.latitude)).to.throw(Error);
+        expect(() => ep[fn](locations.missing.longitude)).to.throw(Error);
+    });
+
+    it('throws an error when calling key with wrong location (too large)', () => {
+
+        const ep = new EarthPixel(0.1);
+        expect(() => ep[fn](locations.too_large.latitude)).to.throw(Error);
+        expect(() => ep[fn](locations.too_large.longitude)).to.throw(Error);
+    });
+
+    it('throws an error when calling key with wrong location (too small)', () => {
+
+        const ep = new EarthPixel(0.1);
+        expect(() => ep[fn](locations.too_small.latitude)).to.throw(Error);
+        expect(() => ep[fn](locations.too_small.longitude)).to.throw(Error);
+    });
 };
 
 describe('Creation', () => {
@@ -116,33 +153,7 @@ describe('Creation', () => {
 
 describe('Usage - Key', () => {
 
-    it('throws an error when calling key with wrong location (type)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.key(locations.NaN.latitude)).to.throw(Error);
-        expect(() => ep.key(locations.NaN.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (missing)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.key(locations.missing.latitude)).to.throw(Error);
-        expect(() => ep.key(locations.missing.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (too large)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.key(locations.too_large.latitude)).to.throw(Error);
-        expect(() => ep.key(locations.too_large.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (too small)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.key(locations.too_small.latitude)).to.throw(Error);
-        expect(() => ep.key(locations.too_small.longitude)).to.throw(Error);
-    });
+    testLocationErrors('key');
 
     it('returns a string when calling key', () => {
 
@@ -164,33 +175,7 @@ describe('Usage - Key', () => {
 
 describe('Usage - Center', () => {
 
-    it('throws an error when calling key with wrong location (type)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.center(locations.NaN.latitude)).to.throw(Error);
-        expect(() => ep.center(locations.NaN.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (missing)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.center(locations.missing.latitude)).to.throw(Error);
-        expect(() => ep.center(locations.missing.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (too large)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.center(locations.too_large.latitude)).to.throw(Error);
-        expect(() => ep.center(locations.too_large.longitude)).to.throw(Error);
-    });
-
-    it('throws an error when calling key with wrong location (too small)', () => {
-
-        const ep = new EarthPixel(0.1);
-        expect(() => ep.center(locations.too_small.latitude)).to.throw(Error);
-        expect(() => ep.center(locations.too_small.longitude)).to.throw(Error);
-    });
+    testLocationErrors('center');
 
     it('returns a valid object when calling center', () => {
 
@@ -208,11 +193,43 @@ describe('Usage - Center', () => {
         const ep = new EarthPixel(0.5);
         const location = {
             latitude: 0.3,
-            longitude: 0
+            longitude: 34
         };
         expect(ep.center(location)).to.equal({
             latitude: 0.25,
-            longitude: 0.25
+            longitude: 34.25
+        });
+    });
+
+});
+
+describe('Usage - Get', () => {
+
+    testLocationErrors('get');
+
+    it('returns a valid object when calling get', () => {
+
+        const ep = new EarthPixel(0.1);
+        const get = ep.get(locations.valid);
+        expect(get).to.be.an.object();
+        if (get) {
+            expect(get.latitude).to.be.a.number();
+            expect(get.longitude).to.be.a.number();
+            expect(get.key).to.be.a.string();
+        }
+    });
+
+    it('returns a valid value when calling get', () => {
+
+        const ep = new EarthPixel(0.5);
+        const location = {
+            latitude: 0.3,
+            longitude: 23
+        };
+        expect(ep.get(location)).to.equal({
+            latitude: 0.25,
+            longitude: 23.25,
+            key: `${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`
         });
     });
 
