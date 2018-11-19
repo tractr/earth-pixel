@@ -1,6 +1,6 @@
 {
   "name": "earth-pixel",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Geo-location approximation algorithm",
   "main": "lib/index.js",
   "directories": {
