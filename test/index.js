@@ -4,7 +4,6 @@
  * Trigonometry constants
  */
 const DEGREES_TO_RADIANS = Math.PI / 180;
-const RADIANS_TO_DEGREES = 180 / Math.PI;
 const EARTH_RADIUS = 6371000;
 const EARTH_PERIMETER = 2 * Math.PI * EARTH_RADIUS; // 40030173.592
 
@@ -302,7 +301,7 @@ describe('Values', () => {
         const minLongitude = 0;
         const maxLongitude = roundFloat(width / _cos);
         
-        const step = 0.0005;
+        const step = 0.001;
         
         const expected = ep.get({
             latitude: roundFloat(width*200,5),
@@ -322,9 +321,9 @@ describe('Values', () => {
                 expect(result.latitude, prefix).to.equal(expected.latitude);
                 expect(result.longitude, prefix).to.equal(expected.longitude);
                 expect(result.key, prefix).to.equal(expected.key);
-                _lon += step;
+                _lon = roundFloat(_lon + step);
             }
-            _lat += step;
+            _lat = roundFloat(_lat + step);
 		}
     });
 });
