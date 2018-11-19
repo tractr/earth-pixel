@@ -8,11 +8,15 @@
   },
   "scripts": {
     "test": "./node_modules/lab/bin/lab -a code -v -t 100",
-    "lint": "./node_modules/.bin/prettier --write '**/*.js'"
+    "lint": "./node_modules/.bin/prettier --write '**/*.js'",
+    "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./lib -d ./lib/index.d.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://EdouardDem@github.com/Tractr/earth-pixel.git"
+  },
+  "opts": {
+    "template": "./node_modules/@otris/jsdoc-tsd"
   },
   "keywords": [
     "geolocation",
@@ -28,7 +32,9 @@
   "homepage": "https://github.com/Tractr/earth-pixel#readme",
   "devDependencies": {
     "code": "^5.2.0",
+    "jsdoc": "^3.5.5",
     "lab": "^15.3.0",
-    "prettier": "^1.14.3"
+    "prettier": "^1.14.3",
+    "@otris/jsdoc-tsd": "^1.0.4"
   }
 }
