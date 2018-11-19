@@ -7,7 +7,8 @@ The goal of this package is to provide a method to group geo-localized requests 
 As a requirement, your system must accept approximation of the position of a geo-localized request.
 If not, there is no need to use this package.
 
-To do so, we consider the geo-location as a discreet value and not a continuous value. It's like watching a pixelized map.
+To do so, we consider the geo-location as a discreet value and not a continuous value.
+It's like seeing the earth as a disco ball.
 
 We split the earth into nearly-squares called pixels. Those pixels have a customizable width.
 Each pixel is identified by a unique key.
@@ -50,13 +51,15 @@ The size of the pixel cannot be greater than 45 degrees.
 
 ### Methods
 
-This package exposes three methods
+#### Encode position
+
+This package exposes three main instance methods
 
 - `get(position)`: Returns the position of the center of the pixel and its unique key.
 - `center(position)`: Returns only the position of the center of the pixel.
 - `key(position)`: Returns only the unique key of the center of the pixel.
 
-Examples:
+Example:
 
 ```javascript
 const ep = new EarthPixel(500);
@@ -84,5 +87,61 @@ ep.center({ latitude: 46.4567, longitude: 6.5461 });
 ep.key({ latitude: 46.4567, longitude: 6.5461 });
  
 // Will return '9c5f-768a-6fa4'
+```
+
+#### Decode position
+
+You can reverse a generated key to its pixel's center location.
+To do so, you can call the static method `extract`.
+This will parse the key and extract the base pixel's width and the pixel's center location.
+
+Example:
+
+```javascript
+// extract method
+EarthPixel.extract('9c5f-6bb8-a2c5');
+
+// Will return
+// {
+//     latitude: 33.99814865515,
+//     longitude: 46.00066283345,
+//     width: 0.0044965152
+// }
+```
+
+With this method, a front-end can request items by passing the pixel key and the back-end will be able to decode the location and perform the request.
+This is really useful to optimize CDN caching.
+
+#### Debug
+
+For debugging, you can call the `debug()` function to get the width of the base pixel and the amount of divisions used by the algorithm.
+
+Example:
+
+```javascript
+const ep = new EarthPixel(500);
  
+// debug method
+ep.debug();
+
+// Will return
+// {
+//     width: 0.0044965152,
+//     divisions: 40031
+// }
+```
+
+#### Precision
+
+To avoid the javascript issue `0.2 + 0.4 = 0.6000000000000001`, all floating values are converted into integers before being manipulated.
+The factor used to convert floats into integers is called precision.
+To get this value, you can call the statc method `precision()`. 
+
+Example:
+
+```javascript
+// precision method
+EarthPixel.precision();
+
+// Will return 1e10
 ```
