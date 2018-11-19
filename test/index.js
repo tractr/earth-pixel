@@ -61,10 +61,10 @@ const locations = {
 			longitude: -181
 		}
 	},
-    valid: {
-        latitude: 34,
-        longitude: 2
-    }
+	valid: {
+		latitude: 34,
+		longitude: 2
+	}
 };
 const testLocationErrors = fn => {
 	it('throws an error when calling key with wrong location (string)', () => {
@@ -103,10 +103,10 @@ describe('Creation', () => {
 		expect(fn).to.throw(Error);
 	});
 
-    it('throws an error if created without width', () => {
-        const fn = () => new EarthPixel(undefined);
-        expect(fn).to.throw(Error);
-    });
+	it('throws an error if created without width', () => {
+		const fn = () => new EarthPixel(undefined);
+		expect(fn).to.throw(Error);
+	});
 
 	it('throws an error if created with invalid width (text)', () => {
 		const fn = () => new EarthPixel('NaN');
@@ -128,10 +128,10 @@ describe('Creation', () => {
 		expect(fn).to.throw(Error);
 	});
 
-    it('throws an error if created with unknown type', () => {
-        const fn = () => new EarthPixel(200, 'wrong');
-        expect(fn).to.throw(Error);
-    });
+	it('throws an error if created with unknown type', () => {
+		const fn = () => new EarthPixel(200, 'wrong');
+		expect(fn).to.throw(Error);
+	});
 
 	it('should be crated with a valid width (number)', () => {
 		const ep = new EarthPixel(500);
@@ -152,23 +152,23 @@ describe('Usage - Key', () => {
 		expect(ep.key(locations.valid)).to.be.a.string();
 	});
 
-    it('returns a valid value when calling key', () => {
-        const ep = new EarthPixel(0.5, 'degrees');
-        const location = {
-            latitude: 0.3,
-            longitude: 0
-        };
-        expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(360).toString(16)}`);
-    });
+	it('returns a valid value when calling key', () => {
+		const ep = new EarthPixel(0.5, 'degrees');
+		const location = {
+			latitude: 0.3,
+			longitude: 0
+		};
+		expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(360).toString(16)}`);
+	});
 
-    it('returns a valid value when calling key on edge', () => {
-        const ep = new EarthPixel(0.5, 'degrees');
-        const location = {
-            latitude: 90,
-            longitude: -180
-        };
-        expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(360).toString(16)}-${(0).toString(16)}`);
-    });
+	it('returns a valid value when calling key on edge', () => {
+		const ep = new EarthPixel(0.5, 'degrees');
+		const location = {
+			latitude: 90,
+			longitude: -180
+		};
+		expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(360).toString(16)}-${(0).toString(16)}`);
+	});
 });
 
 describe('Usage - Center', () => {
@@ -238,21 +238,21 @@ describe('Config', () => {
 		});
 	});
 
-    it('returns a valid value when calling debug', () => {
-        const ep = new EarthPixel(0.8047, 'degrees');
-        expect(ep.debug()).to.equal({
-            width: R(180 / 224), // 0.8035714286
-            divisions: 224
-        });
-    });
+	it('returns a valid value when calling debug', () => {
+		const ep = new EarthPixel(0.8047, 'degrees');
+		expect(ep.debug()).to.equal({
+			width: R(180 / 224), // 0.8035714286
+			divisions: 224
+		});
+	});
 
-    it('converts meters to degrees correctly', () => {
-        const ep = new EarthPixel(560, 'meters');
-        expect(ep.debug()).to.equal({
-            width: R(0.0050360919926137),
-            divisions: 35742
-        });
-    });
+	it('converts meters to degrees correctly', () => {
+		const ep = new EarthPixel(560, 'meters');
+		expect(ep.debug()).to.equal({
+			width: R(0.0050360919926137),
+			divisions: 35742
+		});
+	});
 });
 
 describe('Values', () => {
@@ -260,13 +260,13 @@ describe('Values', () => {
 		const ep = new EarthPixel(45000, 'meters');
 		const { width } = ep.debug();
 		let lastLongitude = 180;
-        const longitude = 0;
-        const startLatitude = -90;
-		
-		for (let offset = 0; offset <= 180 - (width / 4); offset += width) {
-			const latitude = startLatitude + (width / 4) + offset;
+		const longitude = 0;
+		const startLatitude = -90;
+
+		for (let offset = 0; offset <= 180 - width / 4; offset += width) {
+			const latitude = startLatitude + width / 4 + offset;
 			const prefix = `Current latitude = ${latitude}. Width: ${width}`;
-			const expectedLatitude = startLatitude + offset + (width / 2);
+			const expectedLatitude = startLatitude + offset + width / 2;
 			const center = ep.center({
 				latitude,
 				longitude
@@ -276,91 +276,87 @@ describe('Values', () => {
 			lastLongitude = center.longitude;
 		}
 	});
-	
-    it('ensure all point in a pixel ends to its center', () => {
 
-        const ep = new EarthPixel(0.05, 'degrees');
-        const { width } = ep.debug();
-        const _cos = Math.cos(width * 200.5 * DEGREES_TO_RADIANS);
+	it('ensure all point in a pixel ends to its center', () => {
+		const ep = new EarthPixel(0.05, 'degrees');
+		const { width } = ep.debug();
+		const _cos = Math.cos(width * 200.5 * DEGREES_TO_RADIANS);
 
-        const minLatitude = width * 200;
-        const maxLatitude = width * 201;
-        const minLongitude = -180;
-        const maxLongitude = -180 + (width / _cos);
+		const minLatitude = width * 200;
+		const maxLatitude = width * 201;
+		const minLongitude = -180;
+		const maxLongitude = -180 + width / _cos;
 
-        const step = 0.001;
+		const step = 0.001;
 
-        const expected = ep.get({
-            latitude: width * 200.5,
-            longitude: -180 + (width / _cos / 2)
-        });
+		const expected = ep.get({
+			latitude: width * 200.5,
+			longitude: -180 + width / _cos / 2
+		});
 
-        let _lat = minLatitude + step;
-        while (_lat < maxLatitude) {
-            let _lon = minLongitude + step;
-            while (_lon < maxLongitude) {
-            	const result = ep.get({
-                    latitude: _lat,
-                    longitude: _lon
-                });
-                const prefix = `Current position = ${_lat},${_lon}`;
-                expect(result, prefix).to.be.an.object();
-                expect(result.latitude, prefix).to.equal(expected.latitude);
-                expect(result.longitude, prefix).to.equal(expected.longitude);
-                expect(result.key, prefix).to.equal(expected.key);
-                _lon = _lon + step;
-            }
-            _lat = _lat + step;
+		let _lat = minLatitude + step;
+		while (_lat < maxLatitude) {
+			let _lon = minLongitude + step;
+			while (_lon < maxLongitude) {
+				const result = ep.get({
+					latitude: _lat,
+					longitude: _lon
+				});
+				const prefix = `Current position = ${_lat},${_lon}`;
+				expect(result, prefix).to.be.an.object();
+				expect(result.latitude, prefix).to.equal(expected.latitude);
+				expect(result.longitude, prefix).to.equal(expected.longitude);
+				expect(result.key, prefix).to.equal(expected.key);
+				_lon = _lon + step;
+			}
+			_lat = _lat + step;
 		}
-    });
+	});
 });
 
 describe('Extract', () => {
+	it('ensure calling extract with wrong parameters throws an error', () => {
+		expect(() => EarthPixel.extract()).to.throw(Error);
+		expect(() => EarthPixel.extract('')).to.throw(Error);
+		expect(() => EarthPixel.extract(123486)).to.throw(Error);
+		expect(() => EarthPixel.extract(null)).to.throw(Error);
+		expect(() => EarthPixel.extract('123f-456a')).to.throw(Error);
+		expect(() => EarthPixel.extract('123f-456z-456a')).to.throw(Error);
+	});
 
-    it('ensure calling extract with wrong parameters throws an error', () => {
-        expect(() => EarthPixel.extract()).to.throw(Error);
-        expect(() => EarthPixel.extract('')).to.throw(Error);
-        expect(() => EarthPixel.extract(123486)).to.throw(Error);
-        expect(() => EarthPixel.extract(null)).to.throw(Error);
-        expect(() => EarthPixel.extract('123f-456a')).to.throw(Error);
-        expect(() => EarthPixel.extract('123f-456z-456a')).to.throw(Error);
-    });
-    
-    it('ensure all pixel keys can be reversed', () => {
+	it('ensure all pixel keys can be reversed', () => {
+		const ep = new EarthPixel(5, 'degrees');
+		const { width } = ep.debug();
 
-        const ep = new EarthPixel(5, 'degrees');
-        const { width } = ep.debug();
+		const minLatitude = -90 + R(width / 4);
+		const maxLatitude = 90;
+		const minLongitude = -180 + R(width / 4);
+		const maxLongitude = 180;
 
-        const minLatitude = -90 + R(width / 4);
-        const maxLatitude = 90;
-        const minLongitude = -180 + R(width / 4);
-        const maxLongitude = 180;
+		const step = width;
 
-        const step = width;
+		let _lat = minLatitude;
+		while (_lat < maxLatitude) {
+			let _lon = minLongitude;
+			while (_lon < maxLongitude) {
+				const result = ep.get({
+					latitude: _lat,
+					longitude: _lon
+				});
 
-        let _lat = minLatitude;
-        while (_lat < maxLatitude) {
-            let _lon = minLongitude;
-            while (_lon < maxLongitude) {
-            	
-                const result = ep.get({
-                    latitude: _lat,
-                    longitude: _lon
-                });
-                
-                const extracted = EarthPixel.extract(result.key);
-				
-                const prefix = `Current position = ${_lat},${_lon}. Current key = ${result.key}`;
-                
-                expect(extracted, prefix).to.be.an.object();
-                // Compare rounded values to avoid javascript float precision issue
-                expect(result.latitude, prefix).to.equal(extracted.latitude);
-                expect(result.longitude, prefix).to.equal(extracted.longitude);
-                expect(extracted.width, prefix).to.equal(width);
-                
-                _lon = _lon + step;
-            }
-            _lat = _lat + step;
-        }
-    });
+				const extracted = EarthPixel.extract(result.key);
+
+				const prefix = `Current position = ${_lat},${_lon}. Current key = ${result.key}`;
+
+				expect(extracted, prefix).to.be.an.object();
+				// Compare rounded values to avoid javascript float precision issue
+				expect(result.latitude, prefix).to.equal(extracted.latitude);
+				expect(result.longitude, prefix).to.equal(extracted.longitude);
+				expect(extracted.width, prefix).to.equal(width);
+
+				_lon = _lon + step;
+			}
+			_lat = _lat + step;
+		}
+	});
 });
