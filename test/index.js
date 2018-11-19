@@ -12,6 +12,9 @@ const Code = require('code');
 const Lab = require('lab');
 
 const EarthPixel = require('../lib');
+const F = value => {
+    return +value.toFixed(8);
+};
 
 // Test shortcuts
 
@@ -92,9 +95,6 @@ const testLocationErrors = fn => {
 		expect(() => ep[fn](locations.too_small.latitude)).to.throw(Error);
 		expect(() => ep[fn](locations.too_small.longitude)).to.throw(Error);
 	});
-};
-const roundFloat = value => {
-	return +value.toFixed(8);
 };
 
 describe('Creation', () => {
@@ -241,7 +241,7 @@ describe('Config', () => {
     it('returns a valid value when calling debug', () => {
         const ep = new EarthPixel(0.8047, 'degrees');
         expect(ep.debug()).to.equal({
-            width: roundFloat(180 / 224), // 0.8035714286
+            width: F(180 / 224), // 0.8035714286
             divisions: 224
         });
     });
@@ -260,11 +260,11 @@ describe('Values', () => {
 		const longitude = 0;
 		const ep = new EarthPixel(45000, 'meters');
 		const { width } = ep.debug();
-		let lastLongitude = roundFloat(width / 2);
+		let lastLongitude = F(width / 2);
 
-		for (let latitude = 0; latitude <= 90; latitude = roundFloat(latitude + width)) {
+		for (let latitude = 0; latitude <= 90; latitude = F(latitude + width)) {
 			const prefix = `Current latitude = ${latitude}`;
-			const expectedLatitude = latitude >= 90.0 ? roundFloat(latitude - roundFloat(width / 2)) : roundFloat(latitude + roundFloat(width / 2));
+			const expectedLatitude = latitude >= 90.0 ? F(latitude - F(width / 2)) : F(latitude + F(width / 2));
 			const center = ep.center({
 				latitude,
 				longitude
@@ -275,10 +275,10 @@ describe('Values', () => {
 			lastLongitude = center.longitude;
 		}
 
-		lastLongitude = roundFloat(width / 2);
-		for (let latitude = -width; latitude >= -90; latitude = roundFloat(latitude - width)) {
+		lastLongitude = F(width / 2);
+		for (let latitude = -width; latitude >= -90; latitude = F(latitude - width)) {
 			const prefix = `Current latitude = ${latitude}`;
-			const expectedLatitude = roundFloat(latitude + roundFloat(width / 2));
+			const expectedLatitude = F(latitude + F(width / 2));
 			const center = ep.center({
 				latitude,
 				longitude
@@ -294,18 +294,18 @@ describe('Values', () => {
 		
         const ep = new EarthPixel(0.05, 'degrees');
         const { width } = ep.debug();
-        const _cos = Math.cos(roundFloat(width*200,5) * DEGREES_TO_RADIANS);
+        const _cos = Math.cos(F(width*200,5) * DEGREES_TO_RADIANS);
         
-        const minLatitude = roundFloat(width * 200);
-        const maxLatitude = roundFloat(width * 201);
+        const minLatitude = F(width * 200);
+        const maxLatitude = F(width * 201);
         const minLongitude = 0;
-        const maxLongitude = roundFloat(width / _cos);
+        const maxLongitude = F(width / _cos);
         
         const step = 0.001;
         
         const expected = ep.get({
-            latitude: roundFloat(width*200,5),
-            longitude: roundFloat(width / _cos) / 2
+            latitude: F(width*200,5),
+            longitude: F(width / _cos) / 2
         });
         
         let _lat = minLatitude + step;
@@ -321,9 +321,51 @@ describe('Values', () => {
                 expect(result.latitude, prefix).to.equal(expected.latitude);
                 expect(result.longitude, prefix).to.equal(expected.longitude);
                 expect(result.key, prefix).to.equal(expected.key);
-                _lon = roundFloat(_lon + step);
+                _lon = F(_lon + step);
             }
-            _lat = roundFloat(_lat + step);
+            _lat = F(_lat + step);
 		}
+    });
+});
+
+describe('Extract', () => {
+    
+    it('ensure all pixel keys can be reversed', () => {
+
+        const ep = new EarthPixel(0.5, 'degrees');
+        const { width } = ep.debug();
+
+        const minLatitude = -90 + F(width / 4);
+        const maxLatitude = 90;
+        const minLongitude = -180 + F(width / 4);
+        const maxLongitude = 180;
+        
+        const accuracy = 10000;
+
+        const step = width;
+
+        let _lat = minLatitude;
+        while (_lat < maxLatitude) {
+            let _lon = minLongitude;
+            while (_lon < maxLongitude) {
+            	
+                const result = ep.get({
+                    latitude: _lat,
+                    longitude: _lon
+                });
+
+                const extracted = EarthPixel.extract(result.key);
+				
+                const prefix = `Current position = ${_lat},${_lon}. Current key = ${result.key}`;
+                expect(extracted, prefix).to.be.an.object();
+                // Compare rounded values to avoid javascript float precision issue
+                expect(F(Math.floor(extracted.latitude) * accuracy), prefix).to.equal(F(Math.floor(result.latitude) * accuracy));
+                expect(F(Math.floor(extracted.longitude) * accuracy), prefix).to.equal(F(Math.floor(result.longitude) * accuracy));
+                expect(extracted.width, prefix).to.equal(width);
+                
+                _lon = F(_lon + step);
+            }
+            _lat = F(_lat + step);
+        }
     });
 });
