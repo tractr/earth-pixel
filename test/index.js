@@ -290,4 +290,41 @@ describe('Values', () => {
 			lastLongitude = center.longitude;
 		}
 	});
+	
+    it('ensure all point in a pixel ends to its center', () => {
+		
+        const ep = new EarthPixel(0.05, 'degrees');
+        const { width } = ep.debug();
+        const _cos = Math.cos(roundFloat(width*200,5) * DEGREES_TO_RADIANS);
+        
+        const minLatitude = roundFloat(width * 200);
+        const maxLatitude = roundFloat(width * 201);
+        const minLongitude = 0;
+        const maxLongitude = roundFloat(width / _cos);
+        
+        const step = 0.0005;
+        
+        const expected = ep.get({
+            latitude: roundFloat(width*200,5),
+            longitude: roundFloat(width / _cos) / 2
+        });
+        
+        let _lat = minLatitude + step;
+        while (_lat < maxLatitude) {
+            let _lon = minLongitude + step;
+            while (_lon < maxLongitude) {
+            	const result = ep.get({
+                    latitude: _lat,
+                    longitude: _lon
+                });
+                const prefix = `Current position = ${_lat},${_lon}`;
+                expect(result, prefix).to.be.an.object();
+                expect(result.latitude, prefix).to.equal(expected.latitude);
+                expect(result.longitude, prefix).to.equal(expected.longitude);
+                expect(result.key, prefix).to.equal(expected.key);
+                _lon += step;
+            }
+            _lat += step;
+		}
+    });
 });
