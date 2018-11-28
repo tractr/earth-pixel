@@ -11,21 +11,31 @@ declare interface Location {
 }
 
 /**
- * Location with key type definition
+ * Pixel's bounds type definition
  */
-declare interface LocationWithKey {
-    latitude: number;
-    longitude: number;
-    key: string;
+declare interface Bounds {
+    north: number;
+    east: number;
+    south: number;
+    west: number;
 }
 
 /**
- * Location with width type definition
+ * Widths type definition
  */
-declare interface LocationWithWidth {
+declare interface Widths {
     latitude: number;
     longitude: number;
-    width: number;
+}
+
+/**
+ * Pixel info type definition
+ */
+declare interface PixelInfo {
+    center: Location;
+    bounds: Bounds;
+    widths: Widths;
+    key: string;
 }
 
 /**
@@ -48,29 +58,12 @@ declare class EarthPixel {
     constructor(width: number | string, type?: string);
 
     /**
-     * Returns the name of the earth pixel
-     * The key is computed from the pixel's location and the width.
+     * Get all info for a pixel corresponding to a location
      * @param location
      * @returns
      * @throws If the location object is malformed or has invalid coordinates
      */
-    key(location: Location): string;
-
-    /**
-     * Transform a position to it's containing pixel center
-     * @param location
-     * @returns
-     * @throws If the location object is malformed or has invalid coordinates
-     */
-    center(location: Location): Location;
-
-    /**
-     * Get info for a pixel corresponding to a location
-     * @param location
-     * @returns
-     * @throws If the location object is malformed or has invalid coordinates
-     */
-    get(location: Location): LocationWithKey;
+    get(location: Location): PixelInfo;
 
     /**
      * Extract pixel info from key: center latitude, center longitude and pixel width (in degrees)
@@ -78,7 +71,7 @@ declare class EarthPixel {
      * @returns
      * @throws If the key is malformed
      */
-    static extract(key: string): LocationWithWidth;
+    static extract(key: string): PixelInfo;
 
     /**
      * For debugging and testing purpose
