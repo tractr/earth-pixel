@@ -64,7 +64,24 @@ const ep = new EarthPixel(500);
 // get method
 ep.get({ latitude: 46.4567, longitude: 6.5461 });
 
-
+// Will return
+// {
+//     center: {
+//         latitude: 46.45799199725,
+//         longitude: 6.5434950828
+//     },
+//     bounds: {
+//         north: 46.4602402548,
+//         east: 6.546758672,
+//         south: 46.4557437397,
+//         west: 6.5402314936
+//     },
+//     widths: {
+//         latitude: 0.0044965152,
+//         longitude: 0.0065271784
+//     },
+//     key: '9c5f-768b-6fa3'
+// }
 ```
 
 #### Decode position
