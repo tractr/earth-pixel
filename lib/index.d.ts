@@ -60,7 +60,6 @@ declare class EarthPixel {
     /**
      * Get all info from a pixel corresponding to a location
      * @param location
-     * @returns
      * @throws If the location object is malformed or has invalid coordinates
      */
     get(location: Location): PixelInfo;
@@ -68,7 +67,6 @@ declare class EarthPixel {
     /**
      * Extract pixel info from key: center, bounds and pixel widths (in degrees)
      * @param key
-     * @returns
      * @throws If the key is malformed
      */
     static extract(key: string): PixelInfo;
@@ -76,15 +74,13 @@ declare class EarthPixel {
     /**
      * For debugging and testing purpose
      * Get info about current object
-     * @returns
      */
     debug(): Debug;
 
     /**
      * Expose the float precision used by the algorithm
-     * @returns
      */
-    precision(): Number;
+    precision(): number;
 
 }
 
