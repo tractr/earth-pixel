@@ -9,7 +9,8 @@
   "scripts": {
     "test": "./node_modules/lab/bin/lab -a code -v -t 100",
     "lint": "./node_modules/.bin/prettier --write '**/*.js'",
-    "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./lib -d ./lib/index.d.ts"
+    "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./lib -d ./lib/index.d.ts",
+    "build": "./node_modules/.bin/babel lib/index.js --out-file map/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -31,10 +32,13 @@
   },
   "homepage": "https://github.com/Tractr/earth-pixel#readme",
   "devDependencies": {
+    "@otris/jsdoc-tsd": "^1.0.4",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "babel-preset-env": "^1.7.0",
     "code": "^5.2.0",
     "jsdoc": "^3.5.5",
     "lab": "^15.3.0",
-    "prettier": "^1.14.3",
-    "@otris/jsdoc-tsd": "^1.0.4"
+    "prettier": "^1.14.3"
   }
 }
