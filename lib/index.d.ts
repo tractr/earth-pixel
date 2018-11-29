@@ -58,7 +58,7 @@ declare class EarthPixel {
     constructor(width: number | string, type?: string);
 
     /**
-     * Get all info for a pixel corresponding to a location
+     * Get all info from a pixel corresponding to a location
      * @param location
      * @returns
      * @throws If the location object is malformed or has invalid coordinates
@@ -66,7 +66,7 @@ declare class EarthPixel {
     get(location: Location): PixelInfo;
 
     /**
-     * Extract pixel info from key: center latitude, center longitude and pixel width (in degrees)
+     * Extract pixel info from key: center, bounds and pixel widths (in degrees)
      * @param key
      * @returns
      * @throws If the key is malformed
