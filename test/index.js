@@ -14,7 +14,8 @@ const Lab = require('lab');
 const EarthPixel = require('../lib');
 
 const FP = EarthPixel.precision();
-const R = (value, precision = FP) => Math.floor(value * precision) / precision;
+const R = (value, precision = FP) => Math.round(value * precision) / precision;
+const F = (value, precision = FP) => Math.floor(value * precision) / precision;
 
 // Test shortcuts
 
@@ -144,66 +145,24 @@ describe('Creation', () => {
 	});
 });
 
-describe('Usage - Key', () => {
-	testLocationErrors('key');
-
-	it('returns a string when calling key', () => {
-		const ep = new EarthPixel(0.1, 'degrees');
-		expect(ep.key(locations.valid)).to.be.a.string();
-	});
-
-	it('returns a valid value when calling key', () => {
-		const ep = new EarthPixel(0.5, 'degrees');
-		const location = {
-			latitude: 0.3,
-			longitude: 0
-		};
-		expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(360).toString(16)}`);
-	});
-
-	it('returns a valid value when calling key on edge', () => {
-		const ep = new EarthPixel(0.5, 'degrees');
-		const location = {
-			latitude: 90,
-			longitude: -180
-		};
-		expect(ep.key(location)).to.equal(`${(360).toString(16)}-${(360).toString(16)}-${(0).toString(16)}`);
-	});
-});
-
-describe('Usage - Center', () => {
-	testLocationErrors('center');
-
-	it('returns a valid object when calling center', () => {
-		const ep = new EarthPixel(0.1, 'degrees');
-		const center = ep.center(locations.valid);
-		expect(center).to.be.an.object();
-		expect(center.latitude).to.be.a.number();
-		expect(center.longitude).to.be.a.number();
-	});
-
-	it('returns a valid value when calling center', () => {
-		const ep = new EarthPixel(0.5, 'degrees');
-		const location = {
-			latitude: 0.3,
-			longitude: 34
-		};
-		expect(ep.center(location)).to.equal({
-			latitude: 0.25,
-			longitude: 34.25
-		});
-	});
-});
-
-describe('Usage - Get', () => {
+describe('Get', () => {
 	testLocationErrors('get');
 
 	it('returns a valid object when calling get', () => {
 		const ep = new EarthPixel(0.1, 'degrees');
 		const get = ep.get(locations.valid);
 		expect(get).to.be.an.object();
-		expect(get.latitude).to.be.a.number();
-		expect(get.longitude).to.be.a.number();
+		expect(get.center).to.be.an.object();
+		expect(get.center.latitude).to.be.a.number();
+		expect(get.center.longitude).to.be.a.number();
+		expect(get.bounds).to.be.an.object();
+		expect(get.bounds.north).to.be.a.number();
+		expect(get.bounds.east).to.be.a.number();
+		expect(get.bounds.south).to.be.a.number();
+		expect(get.bounds.west).to.be.a.number();
+		expect(get.widths).to.be.an.object();
+		expect(get.widths.latitude).to.be.a.number();
+		expect(get.widths.longitude).to.be.a.number();
 		expect(get.key).to.be.a.string();
 	});
 
@@ -213,11 +172,23 @@ describe('Usage - Get', () => {
 			latitude: 0.3,
 			longitude: 23
 		};
-		expect(ep.get(location)).to.equal({
-			latitude: 0.25,
-			longitude: 23.25,
-			key: `${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`
-		});
+		const result = ep.get(location);
+
+		expect(result.key).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`);
+
+		expect(result.center).to.be.an.object();
+		expect(result.center.latitude).to.equal(0.25);
+		expect(result.center.longitude).to.equal(23.25);
+
+		expect(result.widths).to.be.an.object();
+		expect(result.widths.latitude).to.equal(0.5);
+		expect(result.widths.longitude).to.equal(0.5);
+
+		expect(result.bounds).to.be.an.object();
+		expect(result.bounds.north).to.equal(0.5);
+		expect(result.bounds.east).to.equal(23.5);
+		expect(result.bounds.south).to.equal(0);
+		expect(result.bounds.west).to.equal(23);
 	});
 });
 
@@ -241,7 +212,7 @@ describe('Config', () => {
 	it('returns a valid value when calling debug', () => {
 		const ep = new EarthPixel(0.8047, 'degrees');
 		expect(ep.debug()).to.equal({
-			width: R(180 / 224), // 0.8035714286
+			width: F(180 / 224), // 0.8035714286
 			divisions: 224
 		});
 	});
@@ -249,7 +220,7 @@ describe('Config', () => {
 	it('converts meters to degrees correctly', () => {
 		const ep = new EarthPixel(560, 'meters');
 		expect(ep.debug()).to.equal({
-			width: R(0.0050360919926137),
+			width: F(0.0050360919926137),
 			divisions: 35742
 		});
 	});
@@ -257,9 +228,8 @@ describe('Config', () => {
 
 describe('Values', () => {
 	it('increases longitude along latitude for first pixels', () => {
-		const ep = new EarthPixel(45000, 'meters');
+		const ep = new EarthPixel(5000, 'meters');
 		const { width } = ep.debug();
-		let lastLongitude = 180;
 		const longitude = 0;
 		const startLatitude = -90;
 
@@ -267,13 +237,47 @@ describe('Values', () => {
 			const latitude = startLatitude + width / 4 + offset;
 			const prefix = `Current latitude = ${latitude}. Width: ${width}`;
 			const expectedLatitude = startLatitude + offset + width / 2;
-			const center = ep.center({
+			const center = ep.get({
 				latitude,
 				longitude
-			});
+			}).center;
 			expect(center).to.be.an.object();
 			expect(R(center.latitude, 1e7), prefix).to.equal(R(expectedLatitude, 1e7));
-			lastLongitude = center.longitude;
+		}
+	});
+
+	it('ensure longitude width evolution along latitude for first pixels', () => {
+		const ep = new EarthPixel(5000, 'meters');
+		const { width } = ep.debug();
+		let lastLongitudeWidth = null;
+		const longitude = 0;
+		const startLatitude = -90;
+		let lastLatitudeWidth = startLatitude + width / 4;
+
+		for (let offset = 0; offset <= 180 - width / 4; offset += width) {
+			const latitude = startLatitude + width / 4 + offset;
+			const prefix = `Current latitude = ${latitude}. Width: ${width}`;
+			const widths = ep.get({
+				latitude,
+				longitude
+			}).widths;
+			expect(widths).to.be.an.object();
+			expect(widths.latitude, prefix).to.equal(width);
+			// Reset last value
+			if (latitude >= 0 && lastLongitudeWidth < 0) {
+				lastLongitudeWidth = null;
+			}
+			// Test value
+			if (lastLongitudeWidth) {
+				if (latitude >= 0) {
+					expect(widths.longitude, prefix).to.least(lastLongitudeWidth);
+				} else {
+					expect(widths.longitude, prefix).to.most(lastLongitudeWidth);
+				}
+			}
+			// Update last values
+			lastLatitudeWidth = widths.latitude;
+			lastLongitudeWidth = widths.longitude;
 		}
 	});
 
@@ -292,7 +296,37 @@ describe('Values', () => {
 		const expected = ep.get({
 			latitude: width * 200.5,
 			longitude: -180 + width / _cos / 2
-		});
+		}).center;
+
+		let _lat = minLatitude + step;
+		while (_lat < maxLatitude) {
+			let _lon = minLongitude + step;
+			while (_lon < maxLongitude) {
+				const result = ep.get({
+					latitude: _lat,
+					longitude: _lon
+				}).center;
+				const prefix = `Current position = ${_lat},${_lon}`;
+				expect(result, prefix).to.be.an.object();
+				expect(result.latitude, prefix).to.equal(expected.latitude);
+				expect(result.longitude, prefix).to.equal(expected.longitude);
+				expect(result.key, prefix).to.equal(expected.key);
+				_lon = _lon + step;
+			}
+			_lat = _lat + step;
+		}
+	});
+
+	it('ensure bounds contains center anf match the pixel widths', () => {
+		const ep = new EarthPixel(500000);
+		const { width } = ep.debug();
+
+		const minLatitude = -89.9999;
+		const maxLatitude = 89.9999;
+		const minLongitude = -180;
+		const maxLongitude = 180;
+
+		const step = width;
 
 		let _lat = minLatitude + step;
 		while (_lat < maxLatitude) {
@@ -304,9 +338,13 @@ describe('Values', () => {
 				});
 				const prefix = `Current position = ${_lat},${_lon}`;
 				expect(result, prefix).to.be.an.object();
-				expect(result.latitude, prefix).to.equal(expected.latitude);
-				expect(result.longitude, prefix).to.equal(expected.longitude);
-				expect(result.key, prefix).to.equal(expected.key);
+				expect(result.center, prefix).to.be.an.object();
+				expect(result.bounds, prefix).to.be.an.object();
+				expect(result.widths, prefix).to.be.an.object();
+				expect(result.center.latitude, prefix).to.be.between(result.bounds.south, result.bounds.north);
+				expect(result.center.longitude, prefix).to.be.between(result.bounds.west, result.bounds.east);
+				expect(R(result.widths.latitude), prefix).to.equal(R(result.bounds.north - result.bounds.south));
+				expect(R(result.widths.longitude), prefix).to.equal(R(result.bounds.east - result.bounds.west));
 				_lon = _lon + step;
 			}
 			_lat = _lat + step;
@@ -349,10 +387,21 @@ describe('Extract', () => {
 				const prefix = `Current position = ${_lat},${_lon}. Current key = ${result.key}`;
 
 				expect(extracted, prefix).to.be.an.object();
-				// Compare rounded values to avoid javascript float precision issue
-				expect(result.latitude, prefix).to.equal(extracted.latitude);
-				expect(result.longitude, prefix).to.equal(extracted.longitude);
-				expect(extracted.width, prefix).to.equal(width);
+				expect(extracted.key, prefix).to.equal(result.key);
+
+				expect(extracted.center, prefix).to.be.an.object();
+				expect(extracted.center.latitude, prefix).to.equal(result.center.latitude);
+				expect(extracted.center.longitude, prefix).to.equal(result.center.longitude);
+
+				expect(extracted.widths, prefix).to.be.an.object();
+				expect(extracted.widths.latitude, prefix).to.equal(result.widths.latitude);
+				expect(extracted.widths.longitude, prefix).to.equal(result.widths.longitude);
+
+				expect(extracted.bounds, prefix).to.be.an.object();
+				expect(extracted.bounds.north, prefix).to.equal(result.bounds.north);
+				expect(extracted.bounds.east, prefix).to.equal(result.bounds.east);
+				expect(extracted.bounds.south, prefix).to.equal(result.bounds.south);
+				expect(extracted.bounds.west, prefix).to.equal(result.bounds.west);
 
 				_lon = _lon + step;
 			}
