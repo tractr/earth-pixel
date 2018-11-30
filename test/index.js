@@ -151,18 +151,18 @@ describe('Get', () => {
 	it('returns a valid object when calling get', () => {
 		const ep = new EarthPixel(0.1, 'degrees');
 		const get = ep.get(locations.valid);
-        expect(get).to.be.an.object();
-        expect(get.center).to.be.an.object();
-        expect(get.center.latitude).to.be.a.number();
-        expect(get.center.longitude).to.be.a.number();
-        expect(get.bounds).to.be.an.object();
-        expect(get.bounds.north).to.be.a.number();
-        expect(get.bounds.east).to.be.a.number();
-        expect(get.bounds.south).to.be.a.number();
-        expect(get.bounds.west).to.be.a.number();
-        expect(get.widths).to.be.an.object();
-        expect(get.widths.latitude).to.be.a.number();
-        expect(get.widths.longitude).to.be.a.number();
+		expect(get).to.be.an.object();
+		expect(get.center).to.be.an.object();
+		expect(get.center.latitude).to.be.a.number();
+		expect(get.center.longitude).to.be.a.number();
+		expect(get.bounds).to.be.an.object();
+		expect(get.bounds.north).to.be.a.number();
+		expect(get.bounds.east).to.be.a.number();
+		expect(get.bounds.south).to.be.a.number();
+		expect(get.bounds.west).to.be.a.number();
+		expect(get.widths).to.be.an.object();
+		expect(get.widths.latitude).to.be.a.number();
+		expect(get.widths.longitude).to.be.a.number();
 		expect(get.key).to.be.a.string();
 	});
 
@@ -174,21 +174,21 @@ describe('Get', () => {
 		};
 		const result = ep.get(location);
 
-        expect(result.key).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`);
+		expect(result.key).to.equal(`${(360).toString(16)}-${(180).toString(16)}-${(406).toString(16)}`);
 
-        expect(result.center).to.be.an.object();
-        expect(result.center.latitude).to.equal(0.25);
-        expect(result.center.longitude).to.equal(23.25);
+		expect(result.center).to.be.an.object();
+		expect(result.center.latitude).to.equal(0.25);
+		expect(result.center.longitude).to.equal(23.25);
 
-        expect(result.widths).to.be.an.object();
-        expect(result.widths.latitude).to.equal(0.5);
-        expect(result.widths.longitude).to.equal(0.5);
+		expect(result.widths).to.be.an.object();
+		expect(result.widths.latitude).to.equal(0.5);
+		expect(result.widths.longitude).to.equal(0.5);
 
-        expect(result.bounds).to.be.an.object();
-        expect(result.bounds.north).to.equal(0.5);
-        expect(result.bounds.east).to.equal(23.5);
-        expect(result.bounds.south).to.equal(0);
-        expect(result.bounds.west).to.equal(23);
+		expect(result.bounds).to.be.an.object();
+		expect(result.bounds.north).to.equal(0.5);
+		expect(result.bounds.east).to.equal(23.5);
+		expect(result.bounds.south).to.equal(0);
+		expect(result.bounds.west).to.equal(23);
 	});
 });
 
@@ -245,112 +245,111 @@ describe('Values', () => {
 			expect(R(center.latitude, 1e7), prefix).to.equal(R(expectedLatitude, 1e7));
 		}
 	});
-	
-    it('ensure longitude width evolution along latitude for first pixels', () => {
-        const ep = new EarthPixel(5000, 'meters');
-        const { width } = ep.debug();
-        let lastLongitudeWidth = null;
-        const longitude = 0;
-        const startLatitude = -90;
-        let lastLatitudeWidth = startLatitude + width / 4;
 
-        for (let offset = 0; offset <= 180 - width / 4; offset += width) {
-            const latitude = startLatitude + width / 4 + offset;
-            const prefix = `Current latitude = ${latitude}. Width: ${width}`;
-            const widths = ep.get({
-                latitude,
-                longitude
-            }).widths;
-            expect(widths).to.be.an.object();
-            expect(widths.latitude, prefix).to.equal(width);
-            // Reset last value
-            if (latitude >= 0 && lastLongitudeWidth < 0) {
-                lastLongitudeWidth = null;
+	it('ensure longitude width evolution along latitude for first pixels', () => {
+		const ep = new EarthPixel(5000, 'meters');
+		const { width } = ep.debug();
+		let lastLongitudeWidth = null;
+		const longitude = 0;
+		const startLatitude = -90;
+		let lastLatitudeWidth = startLatitude + width / 4;
+
+		for (let offset = 0; offset <= 180 - width / 4; offset += width) {
+			const latitude = startLatitude + width / 4 + offset;
+			const prefix = `Current latitude = ${latitude}. Width: ${width}`;
+			const widths = ep.get({
+				latitude,
+				longitude
+			}).widths;
+			expect(widths).to.be.an.object();
+			expect(widths.latitude, prefix).to.equal(width);
+			// Reset last value
+			if (latitude >= 0 && lastLongitudeWidth < 0) {
+				lastLongitudeWidth = null;
 			}
 			// Test value
 			if (lastLongitudeWidth) {
-                if (latitude >= 0) {
-                    expect(widths.longitude, prefix).to.least(lastLongitudeWidth);
-                } else {
-                    expect(widths.longitude, prefix).to.most(lastLongitudeWidth);
-                }	
+				if (latitude >= 0) {
+					expect(widths.longitude, prefix).to.least(lastLongitudeWidth);
+				} else {
+					expect(widths.longitude, prefix).to.most(lastLongitudeWidth);
+				}
 			}
 			// Update last values
-            lastLatitudeWidth = widths.latitude;
-            lastLongitudeWidth = widths.longitude;
-        }
-    });
+			lastLatitudeWidth = widths.latitude;
+			lastLongitudeWidth = widths.longitude;
+		}
+	});
 
-    it('ensure all point in a pixel ends to its center', () => {
-        const ep = new EarthPixel(0.05, 'degrees');
-        const { width } = ep.debug();
-        const _cos = Math.cos(width * 200.5 * DEGREES_TO_RADIANS);
+	it('ensure all point in a pixel ends to its center', () => {
+		const ep = new EarthPixel(0.05, 'degrees');
+		const { width } = ep.debug();
+		const _cos = Math.cos(width * 200.5 * DEGREES_TO_RADIANS);
 
-        const minLatitude = width * 200;
-        const maxLatitude = width * 201;
-        const minLongitude = -180;
-        const maxLongitude = -180 + width / _cos;
+		const minLatitude = width * 200;
+		const maxLatitude = width * 201;
+		const minLongitude = -180;
+		const maxLongitude = -180 + width / _cos;
 
-        const step = 0.001;
+		const step = 0.001;
 
-        const expected = ep.get({
-            latitude: width * 200.5,
-            longitude: -180 + width / _cos / 2
-        }).center;
+		const expected = ep.get({
+			latitude: width * 200.5,
+			longitude: -180 + width / _cos / 2
+		}).center;
 
-        let _lat = minLatitude + step;
-        while (_lat < maxLatitude) {
-            let _lon = minLongitude + step;
-            while (_lon < maxLongitude) {
-                const result = ep.get({
-                    latitude: _lat,
-                    longitude: _lon
-                }).center;
-                const prefix = `Current position = ${_lat},${_lon}`;
-                expect(result, prefix).to.be.an.object();
-                expect(result.latitude, prefix).to.equal(expected.latitude);
-                expect(result.longitude, prefix).to.equal(expected.longitude);
-                expect(result.key, prefix).to.equal(expected.key);
-                _lon = _lon + step;
-            }
-            _lat = _lat + step;
-        }
-    });
+		let _lat = minLatitude + step;
+		while (_lat < maxLatitude) {
+			let _lon = minLongitude + step;
+			while (_lon < maxLongitude) {
+				const result = ep.get({
+					latitude: _lat,
+					longitude: _lon
+				}).center;
+				const prefix = `Current position = ${_lat},${_lon}`;
+				expect(result, prefix).to.be.an.object();
+				expect(result.latitude, prefix).to.equal(expected.latitude);
+				expect(result.longitude, prefix).to.equal(expected.longitude);
+				expect(result.key, prefix).to.equal(expected.key);
+				_lon = _lon + step;
+			}
+			_lat = _lat + step;
+		}
+	});
 
-    it('ensure bounds contains center anf match the pixel widths', () => {
-        const ep = new EarthPixel(500000);
-        const { width } = ep.debug();
+	it('ensure bounds contains center anf match the pixel widths', () => {
+		const ep = new EarthPixel(500000);
+		const { width } = ep.debug();
 
-        const minLatitude = -89.9999;
-        const maxLatitude = 89.9999;
-        const minLongitude = -180;
-        const maxLongitude = 180;
-        
-        const step = width;
+		const minLatitude = -89.9999;
+		const maxLatitude = 89.9999;
+		const minLongitude = -180;
+		const maxLongitude = 180;
 
+		const step = width;
 
-        let _lat = minLatitude + step;
-        while (_lat < maxLatitude) {
-            let _lon = minLongitude + step;
-            while (_lon < maxLongitude) {
-                const result = ep.get({
-                    latitude: _lat,
-                    longitude: _lon
-                });
-                const prefix = `Current position = ${_lat},${_lon}`;
-                expect(result, prefix).to.be.an.object();
-                expect(result.center, prefix).to.be.an.object();
-                expect(result.bounds, prefix).to.be.an.object();
-                expect(result.widths, prefix).to.be.an.object();
-                expect(result.center.latitude, prefix).to.be.between(result.bounds.south, result.bounds.north);
-                expect(result.center.longitude, prefix).to.be.between(result.bounds.west, result.bounds.east);
-                expect(R(result.widths.latitude), prefix).to.equal(R(result.bounds.north - result.bounds.south));
-                expect(R(result.widths.longitude), prefix).to.equal(R(result.bounds.east - result.bounds.west));
-                _lon = _lon + step;
-            }
-            _lat = _lat + step;
-        }
-    });
+		let _lat = minLatitude + step;
+		while (_lat < maxLatitude) {
+			let _lon = minLongitude + step;
+			while (_lon < maxLongitude) {
+				const result = ep.get({
+					latitude: _lat,
+					longitude: _lon
+				});
+				const prefix = `Current position = ${_lat},${_lon}`;
+				expect(result, prefix).to.be.an.object();
+				expect(result.center, prefix).to.be.an.object();
+				expect(result.bounds, prefix).to.be.an.object();
+				expect(result.widths, prefix).to.be.an.object();
+				expect(result.center.latitude, prefix).to.be.between(result.bounds.south, result.bounds.north);
+				expect(result.center.longitude, prefix).to.be.between(result.bounds.west, result.bounds.east);
+				expect(R(result.widths.latitude), prefix).to.equal(R(result.bounds.north - result.bounds.south));
+				expect(R(result.widths.longitude), prefix).to.equal(R(result.bounds.east - result.bounds.west));
+				_lon = _lon + step;
+			}
+			_lat = _lat + step;
+		}
+	});
 });
 
 describe('Extract', () => {
@@ -387,22 +386,22 @@ describe('Extract', () => {
 
 				const prefix = `Current position = ${_lat},${_lon}. Current key = ${result.key}`;
 
-                expect(extracted, prefix).to.be.an.object();
-                expect(extracted.key, prefix).to.equal(result.key);
-                
-                expect(extracted.center, prefix).to.be.an.object();
-                expect(extracted.center.latitude, prefix).to.equal(result.center.latitude);
-                expect(extracted.center.longitude, prefix).to.equal(result.center.longitude);
+				expect(extracted, prefix).to.be.an.object();
+				expect(extracted.key, prefix).to.equal(result.key);
 
-                expect(extracted.widths, prefix).to.be.an.object();
-                expect(extracted.widths.latitude, prefix).to.equal(result.widths.latitude);
-                expect(extracted.widths.longitude, prefix).to.equal(result.widths.longitude);
+				expect(extracted.center, prefix).to.be.an.object();
+				expect(extracted.center.latitude, prefix).to.equal(result.center.latitude);
+				expect(extracted.center.longitude, prefix).to.equal(result.center.longitude);
 
-                expect(extracted.bounds, prefix).to.be.an.object();
-                expect(extracted.bounds.north, prefix).to.equal(result.bounds.north);
-                expect(extracted.bounds.east, prefix).to.equal(result.bounds.east);
-                expect(extracted.bounds.south, prefix).to.equal(result.bounds.south);
-                expect(extracted.bounds.west, prefix).to.equal(result.bounds.west);
+				expect(extracted.widths, prefix).to.be.an.object();
+				expect(extracted.widths.latitude, prefix).to.equal(result.widths.latitude);
+				expect(extracted.widths.longitude, prefix).to.equal(result.widths.longitude);
+
+				expect(extracted.bounds, prefix).to.be.an.object();
+				expect(extracted.bounds.north, prefix).to.equal(result.bounds.north);
+				expect(extracted.bounds.east, prefix).to.equal(result.bounds.east);
+				expect(extracted.bounds.south, prefix).to.equal(result.bounds.south);
+				expect(extracted.bounds.west, prefix).to.equal(result.bounds.west);
 
 				_lon = _lon + step;
 			}
