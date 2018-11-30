@@ -18,6 +18,10 @@ All the locations contained in a pixel can be approximated to the center of this
 
 Therefore, each location can be converted into a unique key and shares this key with the neighbourhood.
 
+Here is a visual example:
+
+![Visual EarthPixel](./map/preview.png "Visual EarthPixel")
+
 ## Installation
 
 To install this package, run
@@ -53,11 +57,8 @@ The size of the pixel cannot be greater than 45 degrees.
 
 #### Encode position
 
-This package exposes three main instance methods
-
-- `get(position)`: Returns the position of the center of the pixel and its unique key.
-- `center(position)`: Returns only the position of the center of the pixel.
-- `key(position)`: Returns only the unique key of the center of the pixel.
+This package exposes one main instance methods: `get(position)`.
+This returns the position of the center of the pixel, its bounds, its widths and its unique key.
 
 Example:
 
@@ -69,31 +70,29 @@ ep.get({ latitude: 46.4567, longitude: 6.5461 });
 
 // Will return
 // {
-//     latitude: 46.45579638,
-//     longitude: 6.54325912,
-//     key: '9c5f-768a-6fa4'
+//     center: {
+//         latitude: 46.45799199725,
+//         longitude: 6.5434950828
+//     },
+//     bounds: {
+//         north: 46.4602402548,
+//         east: 6.546758672,
+//         south: 46.4557437397,
+//         west: 6.5402314936
+//     },
+//     widths: {
+//         latitude: 0.0044965152,
+//         longitude: 0.0065271784
+//     },
+//     key: '9c5f-768b-6fa3'
 // }
- 
-// center method
-ep.center({ latitude: 46.4567, longitude: 6.5461 });
- 
-// Will return
-// {
-//     latitude: 46.45579638,
-//     longitude: 6.54325912
-// }
- 
-// key method
-ep.key({ latitude: 46.4567, longitude: 6.5461 });
- 
-// Will return '9c5f-768a-6fa4'
 ```
 
 #### Decode position
 
-You can reverse a generated key to its pixel's center location.
+You can reverse a generated key to its pixel's info.
 To do so, you can call the static method `extract`.
-This will parse the key and extract the base pixel's width and the pixel's center location.
+This will parse the key and extract the base pixel's data.
 
 Example:
 
@@ -103,9 +102,21 @@ EarthPixel.extract('9c5f-6bb8-a2c5');
 
 // Will return
 // {
-//     latitude: 33.99814865515,
-//     longitude: 46.00066283345,
-//     width: 0.0044965152
+//     center: {
+//         latitude: 33.99814865515,
+//         longitude: 46.00066283345
+//     },
+//     bounds: {
+//         north: 34.0003969127,
+//         east: 46.003374657,
+//         south: 33.9959003976,
+//         west: 45.9979510099
+//     },
+//     widths: {
+//         latitude: 0.0044965152,
+//         longitude: 0.0054236471
+//     },
+//     key: '9c5f-6bb8-a2c5'
 // }
 ```
 
