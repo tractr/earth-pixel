@@ -18,6 +18,10 @@ All the locations contained in a pixel can be approximated to the center of this
 
 Therefore, each location can be converted into a unique key and shares this key with the neighbourhood.
 
+Here is a visual example:
+
+![Visual EarthPixel](./map/preview.png "Visual EarthPixel")
+
 ## Installation
 
 To install this package, run
