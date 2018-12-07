@@ -1,6 +1,6 @@
 // Type definitions for EarthPixel
 
-export = EarthPixel;
+export default EarthPixel;
 
 /**
  * Location type definition
