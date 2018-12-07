@@ -11,7 +11,7 @@ const EARTH_PERIMETER = 2 * Math.PI * EARTH_RADIUS; // 40030173.592
 const Code = require('code');
 const Lab = require('lab');
 
-const EarthPixel = require('../lib');
+const EarthPixel = require('../src');
 
 const FP = EarthPixel.precision();
 const R = (value, precision = FP) => Math.round(value * precision) / precision;
