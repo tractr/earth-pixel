@@ -1,9 +1,9 @@
 const browserify = require('browserify');
 
 browserify({
-    standalone: "EarthPixel",
-    paths: ['./node_modules']
+	standalone: 'EarthPixel',
+	paths: ['./node_modules']
 })
-    .add("lib/index.js")
-    .bundle()
-    .pipe(process.stdout);
+	.add('lib/index.js')
+	.bundle()
+	.pipe(process.stdout);
