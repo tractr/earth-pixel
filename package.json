@@ -1,6 +1,6 @@
 {
   "name": "earth-pixel",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Geo-location approximation algorithm",
   "main": "lib/index.js",
   "directories": {
@@ -9,8 +9,8 @@
   "scripts": {
     "test": "./node_modules/lab/bin/lab -a code -v -t 100",
     "lint": "./node_modules/.bin/prettier --write '**/*.js'",
-    "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./lib -d ./lib/index.d.ts",
-    "build": "./node_modules/.bin/babel src/index.js --out-file lib/index.js"
+    "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./src -d ./index.d.ts",
+    "build": "./node_modules/.bin/babel src/index.js --out-file lib/index.js && node browserify.js > lib/bundle.js && cp lib/bundle.js map/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-preset-env": "^1.7.0",
+    "browserify": "^16.2.3",
     "code": "^5.2.0",
     "jsdoc": "^3.5.5",
     "lab": "^15.3.0",
