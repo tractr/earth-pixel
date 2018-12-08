@@ -1,7 +1,3 @@
-// Type definitions for EarthPixel
-
-export default EarthPixel;
-
 /**
  * Location type definition
  */
@@ -84,3 +80,4 @@ declare class EarthPixel {
 
 }
 
+export default EarthPixel;
