@@ -8,8 +8,8 @@ const EARTH_RADIUS = 6371000;
 const EARTH_PERIMETER = 2 * Math.PI * EARTH_RADIUS; // 40030173.592
 
 // Load modules
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
 const EarthPixel = require('../src');
 

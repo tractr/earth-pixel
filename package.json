@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "./node_modules/lab/bin/lab -a code -v -t 100",
+    "test": "./node_modules/@hapi/lab/bin/lab -a @hapi/code -v -t 100",
     "lint": "./node_modules/.bin/prettier --write '**/*.js'",
     "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./src -d ./index.d.ts",
     "build": "./node_modules/.bin/babel src/index.js --out-file lib/index.js && node browserify.js > lib/bundle.js && cp lib/bundle.js map/bundle.js"
@@ -34,12 +34,12 @@
   "devDependencies": {
     "@otris/jsdoc-tsd": "^1.0.4",
     "babel-cli": "^6.26.0",
-    "babel-plugin-add-module-exports": "^1.0.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "babel-preset-env": "^1.7.0",
-    "browserify": "^16.2.3",
-    "code": "^5.2.0",
-    "jsdoc": "^3.5.5",
-    "lab": "^15.3.0",
-    "prettier": "^1.14.3"
+    "browserify": "^16.3.0",
+    "@hapi/code": "^5.3.1",
+    "jsdoc": "^3.6.2",
+    "@hapi/lab": "^19.1.0",
+    "prettier": "^1.18.2"
   }
 }
