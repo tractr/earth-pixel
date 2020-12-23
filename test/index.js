@@ -9,7 +9,7 @@ const EARTH_PERIMETER = 2 * Math.PI * EARTH_RADIUS; // 40030173.592
 
 // Load modules
 const Code = require('@hapi/code');
-const Lab = require('@hapi/lab');
+require('mocha');
 
 const EarthPixel = require('../src');
 
@@ -19,7 +19,6 @@ const F = (value, precision = FP) => Math.floor(value * precision) / precision;
 
 // Test shortcuts
 
-const { describe, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 // Common methods and objects
@@ -27,47 +26,47 @@ const locations = {
 	NaN: {
 		latitude: {
 			latitude: 'NaN',
-			longitude: 2
+			longitude: 2,
 		},
 		longitude: {
 			latitude: 34,
-			longitude: 'NaN'
-		}
+			longitude: 'NaN',
+		},
 	},
 	missing: {
 		latitude: {
-			longitude: 2
+			longitude: 2,
 		},
 		longitude: {
-			latitude: 34
-		}
+			latitude: 34,
+		},
 	},
 	too_large: {
 		latitude: {
 			latitude: 91,
-			longitude: 2
+			longitude: 2,
 		},
 		longitude: {
 			latitude: 34,
-			longitude: 181
-		}
+			longitude: 181,
+		},
 	},
 	too_small: {
 		latitude: {
 			latitude: -91,
-			longitude: 2
+			longitude: 2,
 		},
 		longitude: {
 			latitude: 34,
-			longitude: -181
-		}
+			longitude: -181,
+		},
 	},
 	valid: {
 		latitude: 34,
-		longitude: 2
-	}
+		longitude: 2,
+	},
 };
-const testLocationErrors = fn => {
+const testLocationErrors = (fn) => {
 	it('throws an error when calling key with wrong location (string)', () => {
 		const ep = new EarthPixel(500);
 		expect(() => ep[fn]('34.6,2.7')).to.throw(Error);
@@ -170,7 +169,7 @@ describe('Get', () => {
 		const ep = new EarthPixel(0.5, 'degrees');
 		const location = {
 			latitude: 0.3,
-			longitude: 23
+			longitude: 23,
 		};
 		const result = ep.get(location);
 
@@ -205,7 +204,7 @@ describe('Config', () => {
 		const ep = new EarthPixel(0.5, 'degrees');
 		expect(ep.debug()).to.equal({
 			width: 0.5,
-			divisions: 360
+			divisions: 360,
 		});
 	});
 
@@ -213,7 +212,7 @@ describe('Config', () => {
 		const ep = new EarthPixel(0.8047, 'degrees');
 		expect(ep.debug()).to.equal({
 			width: F(180 / 224), // 0.8035714286
-			divisions: 224
+			divisions: 224,
 		});
 	});
 
@@ -221,7 +220,7 @@ describe('Config', () => {
 		const ep = new EarthPixel(560, 'meters');
 		expect(ep.debug()).to.equal({
 			width: F(0.0050360919926137),
-			divisions: 35742
+			divisions: 35742,
 		});
 	});
 });
@@ -239,7 +238,7 @@ describe('Values', () => {
 			const expectedLatitude = startLatitude + offset + width / 2;
 			const center = ep.get({
 				latitude,
-				longitude
+				longitude,
 			}).center;
 			expect(center).to.be.an.object();
 			expect(R(center.latitude, 1e7), prefix).to.equal(R(expectedLatitude, 1e7));
@@ -259,7 +258,7 @@ describe('Values', () => {
 			const prefix = `Current latitude = ${latitude}. Width: ${width}`;
 			const widths = ep.get({
 				latitude,
-				longitude
+				longitude,
 			}).widths;
 			expect(widths).to.be.an.object();
 			expect(widths.latitude, prefix).to.equal(width);
@@ -295,7 +294,7 @@ describe('Values', () => {
 
 		const expected = ep.get({
 			latitude: width * 200.5,
-			longitude: -180 + width / _cos / 2
+			longitude: -180 + width / _cos / 2,
 		}).center;
 
 		let _lat = minLatitude + step;
@@ -304,7 +303,7 @@ describe('Values', () => {
 			while (_lon < maxLongitude) {
 				const result = ep.get({
 					latitude: _lat,
-					longitude: _lon
+					longitude: _lon,
 				}).center;
 				const prefix = `Current position = ${_lat},${_lon}`;
 				expect(result, prefix).to.be.an.object();
@@ -334,7 +333,7 @@ describe('Values', () => {
 			while (_lon < maxLongitude) {
 				const result = ep.get({
 					latitude: _lat,
-					longitude: _lon
+					longitude: _lon,
 				});
 				const prefix = `Current position = ${_lat},${_lon}`;
 				expect(result, prefix).to.be.an.object();
@@ -379,7 +378,7 @@ describe('Extract', () => {
 			while (_lon < maxLongitude) {
 				const result = ep.get({
 					latitude: _lat,
-					longitude: _lon
+					longitude: _lon,
 				});
 
 				const extracted = EarthPixel.extract(result.key);
