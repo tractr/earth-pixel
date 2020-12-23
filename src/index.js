@@ -37,7 +37,7 @@ if (360 * FLOAT_PRECISION > Number.MAX_SAFE_INTEGER) {
  * @return {number}
  * @private
  */
-const I = value => {
+const I = (value) => {
 	return Math.floor(value * FLOAT_PRECISION);
 };
 /**
@@ -47,7 +47,7 @@ const I = value => {
  * @return {number}
  * @private
  */
-const F = value => {
+const F = (value) => {
 	return value / FLOAT_PRECISION;
 };
 /**
@@ -57,7 +57,7 @@ const F = value => {
  * @return {number}
  * @private
  */
-const R = value => F(I(value));
+const R = (value) => F(I(value));
 
 /**
  * Location type definition
@@ -187,14 +187,14 @@ class EarthPixel {
 		return {
 			center: {
 				latitude: F(latitude),
-				longitude: F(longitude)
+				longitude: F(longitude),
 			},
 			bounds: EarthPixel._getBoundsFromCenter(latitude, longitude, _latWidth, _longWidth),
 			widths: {
 				latitude: this._width,
-				longitude: F(_longWidth)
+				longitude: F(_longWidth),
 			},
-			key
+			key,
 		};
 	}
 
@@ -232,14 +232,14 @@ class EarthPixel {
 		return {
 			center: {
 				latitude: F(latitude),
-				longitude: F(longitude)
+				longitude: F(longitude),
 			},
 			bounds: EarthPixel._getBoundsFromCenter(latitude, longitude, _latWidth, _longWidth),
 			widths: {
 				latitude: width,
-				longitude: F(_longWidth)
+				longitude: F(_longWidth),
 			},
-			key
+			key,
 		};
 	}
 
@@ -253,7 +253,7 @@ class EarthPixel {
 	debug() {
 		return {
 			width: this._width,
-			divisions: this._divisions
+			divisions: this._divisions,
 		};
 	}
 
@@ -294,7 +294,7 @@ class EarthPixel {
 
 		return {
 			latitude: _latitude,
-			longitude: _longitude
+			longitude: _longitude,
 		};
 	}
 
@@ -337,7 +337,7 @@ class EarthPixel {
 			north: F(latitude + latWidth / 2),
 			east: F(longitude + lonWidth / 2),
 			south: F(latitude - latWidth / 2),
-			west: F(longitude - lonWidth / 2)
+			west: F(longitude - lonWidth / 2),
 		};
 	}
 

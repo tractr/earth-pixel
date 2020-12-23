@@ -2,9 +2,11 @@
 
 Geo-location approximation algorithm.
 
-The goal of this package is to provide a method to group geo-localized requests in order to share responses' cache.
+[![Build Status](https://travis-ci.org/Tractr/earth-pixel.svg?branch=master)](https://travis-ci.org/Tractr/earth-pixel) [![codecov](https://codecov.io/gh/Tractr/earth-pixel/branch/master/graph/badge.svg)](https://codecov.io/gh/Tractr/earth-pixel)
 
-As a requirement, your system must accept approximation of the position of a geo-localized request.
+The goal of this package is to provide a method to group geo-localized requests in order to share responses cache.
+
+As a requirement, your app must accept approximation of the position of a geo-localized request.
 If not, there is no need to use this package.
 
 To do so, we consider the geo-location as a discreet value and not a continuous value.
@@ -32,6 +34,18 @@ npm install --save earth-pixel
 
 ## Usage
 
+### Import
+
+```javascript
+const EarthPixel = require("earth-pixel");
+```
+
+or
+
+```javascript
+import EarthPixel from 'earth-pixel';
+```
+
 ### Constructor
 
 First of all, you must define the size of the pixel, in meters or in degrees (at latitude 0).
@@ -57,7 +71,7 @@ The size of the pixel cannot be greater than 45 degrees.
 
 #### Encode position
 
-This package exposes one main instance methods: `get(position)`.
+This package exposes one main instance method: `get(position)`.
 This returns the position of the center of the pixel, its bounds, its widths and its unique key.
 
 Example:
@@ -91,8 +105,8 @@ ep.get({ latitude: 46.4567, longitude: 6.5461 });
 #### Decode position
 
 You can reverse a generated key to its pixel's info.
-To do so, you can call the static method `extract`.
-This will parse the key and extract the base pixel's data.
+To do so, call the static method `extract`.
+This parses the key and extracts the base pixel's data.
 
 Example:
 
@@ -125,7 +139,7 @@ This is really useful to optimize CDN caching.
 
 #### Debug
 
-For debugging, you can call the `debug()` function to get the width of the base pixel and the amount of divisions used by the algorithm.
+For debugging, you can call the `debug()` function to get the width of the base pixel (in degrees) and the amount of divisions used by the algorithm.
 
 Example:
 
@@ -146,7 +160,7 @@ ep.debug();
 
 To avoid the javascript issue `0.2 + 0.4 = 0.6000000000000001`, all floating values are converted into integers before being manipulated.
 The factor used to convert floats into integers is called precision.
-To get this value, you can call the statc method `precision()`. 
+To get this value, call the static method `precision()`. 
 
 Example:
 

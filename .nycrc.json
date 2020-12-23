@@ -1,0 +1,20 @@
+{
+  "reporter": [
+    "lcov",
+    "text-summary"
+  ],
+  "extension": [
+    ".js"
+  ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "lib",
+    "test/**/*.js"
+  ],
+  "sourceMap": true,
+  "instrument": true,
+  "check-coverage": true,
+  "cache": true
+}
