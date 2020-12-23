@@ -7,6 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
+    "update": "npm-check -u",
     "test": "./node_modules/@hapi/lab/bin/lab -a @hapi/code -v -t 100",
     "lint": "./node_modules/.bin/prettier --write '**/*.js'",
     "doc": "./node_modules/.bin/jsdoc -t node_modules/@otris/jsdoc-tsd -r ./src -d ./index.d.ts",
@@ -32,14 +33,25 @@
   },
   "homepage": "https://github.com/Tractr/earth-pixel#readme",
   "devDependencies": {
-    "@otris/jsdoc-tsd": "^1.0.4",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@hapi/code": "^8.0.2",
+    "@hapi/lab": "^24.1.0",
+    "@otris/jsdoc-tsd": "^2.0.0",
     "babel-cli": "^6.26.0",
-    "babel-plugin-add-module-exports": "^1.0.2",
+    "babel-plugin-add-module-exports": "^1.0.4",
     "babel-preset-env": "^1.7.0",
-    "browserify": "^16.3.0",
-    "@hapi/code": "^5.3.1",
-    "jsdoc": "^3.6.2",
-    "@hapi/lab": "^19.1.0",
-    "prettier": "^1.18.2"
+    "browserify": "^17.0.0",
+    "husky": "^4.3.6",
+    "jsdoc": "^3.6.6",
+    "npm-check": "^5.9.2",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "pretty-quick --staged --pattern \"**/*.js\""
+    }
   }
 }
