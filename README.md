@@ -2,7 +2,7 @@
 
 Geo-location approximation algorithm.
 
-[![Build Status](https://travis-ci.org/Tractr/earth-pixel.svg?branch=master)](https://travis-ci.org/Tractr/earth-pixel) [![codecov](https://codecov.io/gh/Tractr/earth-pixel/branch/master/graph/badge.svg)](https://codecov.io/gh/Tractr/earth-pixel)
+[![Build Status](https://travis-ci.com/Tractr/earth-pixel.svg?branch=master)](https://travis-ci.com/Tractr/earth-pixel) [![codecov](https://codecov.io/gh/Tractr/earth-pixel/branch/master/graph/badge.svg)](https://codecov.io/gh/Tractr/earth-pixel)
 
 The goal of this package is to provide a method to group geo-localized requests in order to share responses cache.
 
