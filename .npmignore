@@ -2,7 +2,7 @@
 coverage/
 src/
 test/
-map/
+samples/
 
 .idea
 .vscode

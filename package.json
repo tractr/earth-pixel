@@ -12,7 +12,7 @@
     "mocha": "mocha",
     "lint": "prettier --write '**/*.js'",
     "doc": "jsdoc -t node_modules/@otris/jsdoc-tsd -r ./src -d ./index.d.ts",
-    "build": "babel src/index.js --out-file lib/index.js && node browserify.js > lib/bundle.js && cp lib/bundle.js map/bundle.js"
+    "build": "babel src/index.js --out-file lib/index.js && node browserify.js > lib/bundle.js"
   },
   "repository": {
     "type": "git",

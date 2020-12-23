@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="map"></div>
-<script src="bundle.js"></script>
+<script src="https://unpkg.com/earth-pixel@1.1.0/lib/bundle.js"></script>
 <script>
     function initMap() {
         const ep = new EarthPixel(500);
@@ -74,7 +74,6 @@
         });
     }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6oRSWQpd-oPM9E7C75H0-4V5NqBQpyfA&callback=initMap"
-        async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
 </body>
 </html>

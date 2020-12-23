@@ -22,7 +22,7 @@ Therefore, each location can be converted into a unique key and shares this key 
 
 Here is a visual example:
 
-![Visual EarthPixel](./map/preview.png "Visual EarthPixel")
+![Visual EarthPixel](./samples/preview.png "Visual EarthPixel")
 
 ## Installation
 
